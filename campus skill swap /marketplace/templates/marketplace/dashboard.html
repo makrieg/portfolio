@@ -1,0 +1,27 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<h2>Your Dashboard</h2>
+<p>Manage your skill posts and booking requests.</p>
+
+<div class="mb-4">
+    <a href="{% url 'marketplace:skill_create' %}" class="btn btn-success me-2">Post a New Skill</a>
+    <a href="{% url 'marketplace:booking_requests_received' %}" class="btn btn-info me-2">Received Requests</a>
+    <a href="{% url 'marketplace:booking_requests_sent' %}" class="btn btn-secondary">Sent Requests</a>
+</div>
+<div class="list-group">
+    {% for skill in skills %}
+    <div class="list-group-item">
+        <h5>{{ skill.title }}</h5>
+        <p>{{ skill.description|truncatechars:120 }}</p>
+        <p><strong>Status:</strong> {{ skill.availability }} | <strong>Contact:</strong> {{ skill.contact_preference }}
+        </p>
+        <a href="{% url 'marketplace:skill_detail' skill.pk %}" class="btn btn-sm btn-primary">View</a>
+        <a href="{% url 'marketplace:skill_update' skill.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+        <a href="{% url 'marketplace:skill_delete' skill.pk %}" class="btn btn-sm btn-danger">Delete</a>
+    </div>
+    {% empty %}
+    <p>You have not posted any skills yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

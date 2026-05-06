@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <rect width="100%" height="100%" fill="#0b5366" rx="12"/>
+  <g fill="#fff" font-family="Arial, Helvetica, sans-serif">
+    <text x="60" y="80" font-size="36">n8n Workflow — Intake & Orchestration</text>
+    <rect x="60" y="120" width="380" height="140" rx="8" fill="#08323a" />
+    <text x="80" y="160" font-size="20">Webhook</text>
+    <rect x="480" y="120" width="380" height="140" rx="8" fill="#08323a" />
+    <text x="500" y="160" font-size="20">Set / Transform</text>
+    <rect x="900" y="120" width="200" height="140" rx="8" fill="#08323a" />
+    <text x="920" y="160" font-size="20">Gmail Send</text>
+    <path d="M440 190 L480 150" stroke="#38bdf8" stroke-width="4" fill="none" />
+  </g>
+</svg>

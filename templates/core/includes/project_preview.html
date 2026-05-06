@@ -1,0 +1,85 @@
+{% if project.image %}
+<img src="{{ project.image.url }}" class="card-img-top" alt="{{ project.title }}">
+{% elif project.title == 'Chatbot Project' %}
+<div class="card-img-top project-preview preview-chatbot">
+    <div class="project-preview-top">
+        <div class="project-preview-label">Conversational AI</div>
+        <div class="project-preview-icon">💬</div>
+    </div>
+    <div class="project-preview-bottom">
+        <span class="preview-pill">Prompt</span>
+        <span class="preview-pill">Reply</span>
+        <span class="preview-pill">Chat Loop</span>
+    </div>
+</div>
+{% elif project.title == 'LangChain Agent Project' %}
+<div class="card-img-top project-preview preview-langchain">
+    <div class="project-preview-top">
+        <div class="project-preview-label">Agent Framework</div>
+        <div class="project-preview-icon">🧠</div>
+    </div>
+    <div class="project-preview-bottom">
+        <span class="preview-pill">LangChain</span>
+        <span class="preview-pill">Gemini</span>
+        <span class="preview-pill">Messages</span>
+    </div>
+</div>
+{% elif project.title == 'n8n Agent Workflow Project' %}
+<div class="card-img-top project-preview preview-n8n">
+    <div class="project-preview-top">
+        <div class="project-preview-label">Workflow Automation</div>
+        <div class="project-preview-icon">🔀</div>
+    </div>
+    <div class="project-preview-bottom">
+        <span class="preview-pill">Webhook</span>
+        <span class="preview-pill">Pricing</span>
+        <span class="preview-pill">Scheduling</span>
+    </div>
+</div>
+{% elif project.title == 'Google AI Studio Media Project' %}
+<div class="card-img-top project-preview preview-media">
+    <div class="project-preview-top">
+        <div class="project-preview-label">Generated Media</div>
+        <div class="project-preview-icon">🎬</div>
+    </div>
+    <div class="project-preview-bottom">
+        <span class="preview-pill">Video</span>
+        <span class="preview-pill">Images</span>
+        <span class="preview-pill">Prompts</span>
+    </div>
+</div>
+{% elif project.title == 'Machine Learning Project (scikit-learn)' %}
+<div class="card-img-top project-preview preview-ml">
+    <div class="project-preview-top">
+        <div class="project-preview-label">Predictive Models</div>
+        <div class="project-preview-icon">📈</div>
+    </div>
+    <div class="project-preview-bottom">
+        <span class="preview-pill">scikit-learn</span>
+        <span class="preview-pill">Regression</span>
+        <span class="preview-pill">Classification</span>
+    </div>
+</div>
+{% elif project.title == 'Campus SkillSwap Django Project' %}
+<div class="card-img-top project-preview preview-skillswap">
+    <div class="project-preview-top">
+        <div class="project-preview-label">Student Marketplace</div>
+        <div class="project-preview-icon">🤝</div>
+    </div>
+    <div class="project-preview-bottom">
+        <span class="preview-pill">Listings</span>
+        <span class="preview-pill">Bookings</span>
+        <span class="preview-pill">Reviews</span>
+    </div>
+</div>
+{% else %}
+<div class="card-img-top project-preview" style="background: linear-gradient(135deg, #475569 0%, #0f172a 100%);">
+    <div class="project-preview-top">
+        <div class="project-preview-label">Project Preview</div>
+        <div class="project-preview-icon">📁</div>
+    </div>
+    <div class="project-preview-bottom">
+        <span class="preview-pill">Portfolio</span>
+    </div>
+</div>
+{% endif %}

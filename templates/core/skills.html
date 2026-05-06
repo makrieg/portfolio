@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Skills - Portfolio{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1>My Skills</h1>
+        <p class="lead">Technologies and tools I work with</p>
+    </div>
+</div>
+
+<div class="container my-5">
+    {% if skills %}
+    <!-- Skills by Category -->
+    <div class="row">
+        {% regroup skills by get_category_display as skills_by_category %}
+        {% for category in skills_by_category %}
+        <div class="col-md-6 mb-4">
+            <h3>{{ category.grouper }}</h3>
+            <div class="skill-list">
+                {% for skill in category.list %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <h6 class="card-title mb-0">{{ skill.name }}</h6>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Skills Summary -->
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3>All Skills</h3>
+            <div class="skill-cloud">
+                {% for skill in skills %}
+                <span class="skill-badge">{{ skill.name }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        Skills coming soon!
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

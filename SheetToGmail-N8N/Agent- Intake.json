@@ -1,0 +1,133 @@
+{
+  "name": "Agent- Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9316504a-97d3-4838-975e-7d154b05f757",
+      "name": "Webhook",
+      "webhookId": "e5797898-48c4-414f-8316-bd99bb4c843b"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=IMPORTANT:\n- Output ONLY valid JSON.\n- Do NOT use markdown.\n- Do NOT use ``` fences.\n- Do NOT add explanations.\n- Do NOT say Hello or any greetings\n- The entire response must start with { and end with }.\n\nExtract job information from this customer message.\nReturn ONLY JSON with exactly these keys:\n{\n  \"service\": \"\",\n  \"address\": \"\",\n  \"unit\": \"\",\n  \"zip\": \"\",\n  \"preferred_days\": [],\n  \"urgency\": \"low|medium|high\",\n  \"notes\": \"\"\n}\n\nCustomer message:\n{{ $json.body.message }}\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2ac5a47c-a581-4462-8a77-a2c4316b827e",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XogfdEHHtJSVRqEz",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $json.content?.parts?.[0]?.text;\nlet raw = text.replace(/```json/g,\"\").replace(/```/g,\"\").trim();\nreturn [JSON.parse(raw)];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "id": "6342071d-35c4-4747-9909-289e0709d8f1",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        688,
+        0
+      ],
+      "id": "2c7ff619-0b03-4425-a4eb-6f8813f460d3",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "f2d9c9b1-ce13-4864-bc97-66d784eae713",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5634405a2be6b2fa485649191ee00ff364f6080e0682ec9f50230f6d110f85ae"
+  },
+  "id": "EOoL5acWS0HhgPOQ",
+  "tags": []
+}

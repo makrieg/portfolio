@@ -1,0 +1,112 @@
+{
+  "name": "Agent- Scheduling",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent-scheduling",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "aa519b78-a0e8-4829-8ac9-a84762412c86",
+      "name": "Webhook",
+      "webhookId": "8fe85965-f9ba-44b1-9612-ba7e7c1bed61"
+    },
+    {
+      "parameters": {
+        "url": "https://timeapi.io/api/Time/current/zone?timeZone=America/Chicago",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        288,
+        0
+      ],
+      "id": "2c1870cb-4e85-4670-b711-2d65ac17d5d8",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// After an HTTP Request node, the current $json may be the time API response.\n// To reliably read the original webhook input, reference the Webhook node directly:\n//const preferred = $node[\"Webhook\"].json.body.preferred_days || [];\nconst preferred = $json.preferred_days || [];\n\nconst slots = [\n  \"Thu 4:30pm\",\n  \"Thu 5:30pm\",\n  \"Sat 9:00am\",\n  \"Sat 10:30am\",\n  \"Sun 1:00pm\"\n];\n\nlet filtered = slots;\n\nif (preferred.length > 0) {\n  filtered = slots.filter(s => preferred.some(d => s.startsWith(d)));\n}\n\nreturn [{\n  proposed_slots: filtered.slice(0, 3)\n}];\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "id": "f5598537-8fb3-4dd6-ad49-d780f9f89560",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        704,
+        0
+      ],
+      "id": "c1b2482f-f328-4176-a965-aa7b4b95d98d",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "b7be87e5-7238-4fd1-bd94-e0f492fced89",
+  "meta": {
+    "instanceId": "5634405a2be6b2fa485649191ee00ff364f6080e0682ec9f50230f6d110f85ae"
+  },
+  "id": "QkH2O6wf9dCbf8GG",
+  "tags": []
+}

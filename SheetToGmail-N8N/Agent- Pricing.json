@@ -1,0 +1,155 @@
+{
+  "name": "Agent- Pricing",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent-pricing",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9e572f38-8ef8-40f8-8a81-142611c517d2",
+      "name": "Webhook",
+      "webhookId": "4469d1a0-89ea-46b6-8ab0-4718c303aae3"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"catalog\": {\n  \"faucet_replace\": 120,\n  \"ceiling_fan_install\": 150,\n  \"tv_mount\": 140,\n  \"drywall_patch_base\": 90,\n  \"garbage_disposal_replace\": 160\n}\n}\n",
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d96648c0-a0e2-4f19-b998-6e13b78ac40e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const service = $json.body.service;\nconst zip = $json.body.zip;\nconst urgency = $json.body.urgency;\nlet base = $json.catalog[service] ?? 120;\nlet travel = 20;\nif (zip === \"76706\") travel = 0;\nif (zip === \"76708\") travel = 10;\n\nlet subtotal = base + travel;\nlet rush = urgency === \"high\" ? Math.round(subtotal * 0.2) : 0;\n\nreturn [{\n  estimate: subtotal + rush,\n  breakdown: { base, travel, rush }\n}];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "dde9053d-2522-4677-b3e7-94a09022f41d",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}\n ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        624,
+        0
+      ],
+      "id": "9fca6447-59ba-4b52-a61b-300677171af6",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "makrieg.app.n8n.cloud",
+            "user-agent": "axios/1.12.0",
+            "content-length": "60",
+            "accept": "application/json,text/html,application/xhtml+xml,application/xml,text/*;q=0.9, image/*;q=0.8, */*;q=0.7",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "4.182.64.76",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "DE",
+            "cf-ray": "9d61c5f9dea091db-FRA",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/json",
+            "x-forwarded-for": "4.182.64.76, 172.70.243.212",
+            "x-forwarded-host": "makrieg.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-48-77b57c955f-nkvdb",
+            "x-is-trusted": "yes",
+            "x-real-ip": "4.182.64.76"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "service": "replace a faucet",
+            "zip": "76706",
+            "urgency": "low"
+          },
+          "webhookUrl": "https://makrieg.app.n8n.cloud/webhook/agent-pricing",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "25b43e79-c468-475e-928e-c2dd9b8f6218",
+  "meta": {
+    "instanceId": "5634405a2be6b2fa485649191ee00ff364f6080e0682ec9f50230f6d110f85ae"
+  },
+  "id": "9PW3jgLPugaGtOkX",
+  "tags": []
+}

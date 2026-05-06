@@ -1,0 +1,183 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<!-- Skill Header -->
+<div class="skill-header">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h2><i class="fas fa-star me-2"></i>{{ skill.title }}</h2>
+            <p style="margin-bottom: 0; opacity: 0.9;">
+                <i class="fas fa-user-circle me-2"></i>by <strong>{{ skill.owner.username }}</strong> • Posted {{ skill.created_at|date:'M d, Y' }}
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            {% if skill.is_free %}
+            <span
+                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 20px; font-weight: 700; display: inline-block; font-size: 1.1rem;">FREE</span>
+            {% else %}
+            <span
+                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 20px; font-weight: 700; display: inline-block; font-size: 1.1rem;">${{ skill.price }}</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Rating Section -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        {% if skill.get_average_rating %}
+        <div class="alert alert-info" style="margin-bottom: 0;">
+            <i class="fas fa-star me-2"></i><strong>Rating:</strong> {{ skill.get_average_rating }}/5 ⭐ ({{ skill.get_review_count }} review{{ skill.get_review_count|pluralize }})
+        </div>
+        {% else %}
+        <div class="alert alert-secondary" style="margin-bottom: 0;">
+            <i class="fas fa-star-half-alt me-2"></i>No reviews yet. Be the first to review!
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Main Content Row -->
+<div class="row">
+    <!-- Left Column -->
+    <div class="col-md-8">
+        <!-- Description -->
+        <div class="skill-info-box">
+            <h5><i class="fas fa-align-left me-2"></i>About This Skill</h5>
+            <p style="margin-bottom: 0; line-height: 1.6;">{{ skill.description }}</p>
+        </div>
+
+        <!-- Details -->
+        <div class="skill-info-box">
+            <h5><i class="fas fa-info-circle me-2"></i>Details</h5>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label
+                        style="color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Category</label>
+                    <p style="margin-bottom: 0; font-weight: 600;">
+                        <span class="category-badge">{{ skill.category }}</span>
+                    </p>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label
+                        style="color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Contact
+                        Preference</label>
+                    <p style="margin-bottom: 0;"><i class="fas fa-comment-dots me-2"></i><strong>{{ skill.contact_preference }}</strong></p>
+                </div>
+                <div class="col-md-6">
+                    <label
+                        style="color: #94a3b8; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Availability</label>
+                    <p style="margin-bottom: 0;"><i class="fas fa-clock me-2"></i><strong>{{ skill.availability }}</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div class="skill-info-box">
+            <h5><i class="fas fa-comments me-2"></i>Reviews ({{ skill.get_review_count }})</h5>
+
+            {% if reviews %}
+            <div style="max-height: 500px; overflow-y: auto;">
+                {% for review in reviews %}
+                <div style="padding: 1.5rem; border-bottom: 1px solid #e2e8f0;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <strong style="color: var(--primary);">{{ review.reviewer.username }}</strong>
+                        <div
+                            style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-weight: 600; font-size: 0.85rem;">
+                            {{ review.rating }} <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p style="color: #64748b; margin-bottom: 0.5rem;">{{ review.comment }}</p>
+                    <small style="color: #94a3b8;">{{ review.created_at|date:'M d, Y' }}</small>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: #94a3b8; text-align: center; padding: 2rem;">
+                <i class="fas fa-comments"
+                    style="font-size: 2rem; margin-bottom: 1rem; display: block; color: #cbd5e1;"></i>
+                No reviews yet. Be the first to review this skill!
+            </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="col-md-4">
+        <!-- Action Buttons -->
+        <div class="skill-info-box">
+            <h5 style="margin-bottom: 1rem;"><i class="fas fa-handshake me-2"></i>Actions</h5>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                {% if user.is_authenticated and user != skill.owner %}
+                <a href="{% url 'marketplace:booking_request_create' skill.pk %}" class="btn btn-success btn-lg"
+                    style="width: 100%;">
+                    <i class="fas fa-calendar me-2"></i>Request Session
+                </a>
+                {% endif %}
+
+                {% if user == skill.owner %}
+                <a href="{% url 'marketplace:skill_update' skill.pk %}" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-edit me-2"></i>Edit Skill
+                </a>
+                <a href="{% url 'marketplace:skill_delete' skill.pk %}" class="btn btn-danger" style="width: 100%;">
+                    <i class="fas fa-trash me-2"></i>Delete Skill
+                </a>
+                {% endif %}
+
+                <a href="{% url 'marketplace:home' %}" class="btn btn-secondary" style="width: 100%;">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Home
+                </a>
+            </div>
+        </div>
+
+        <!-- Review Form -->
+        {% if user.is_authenticated %}
+        {% if user == skill.owner %}
+        <div class="skill-info-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+            <p style="color: #92400e; margin-bottom: 0;">
+                <i class="fas fa-info-circle me-2"></i>You cannot review your own skill.
+            </p>
+        </div>
+        {% elif can_review %}
+        <div class="skill-info-box">
+            <h6><i class="fas fa-pen me-2"></i>Leave a Review</h6>
+            <form method="post">
+                {% csrf_token %}
+                <div style="margin-bottom: 1rem;">
+                    {{ form.rating }}
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    {{ form.comment }}
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-send me-2"></i>Submit Review
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <div class="skill-info-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);">
+            <p style="color: #1d4ed8; margin-bottom: 0.5rem;">
+                <i class="fas fa-lock me-2"></i>Reviews unlock after a completed booking.
+            </p>
+            <p style="color: #1e40af; margin-bottom: 0; font-size: 0.9rem;">
+                Book this service and mark the session as completed before leaving feedback.
+            </p>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="skill-info-box" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
+            <p style="color: #047857; margin-bottom: 0.5rem;">
+                <i class="fas fa-lock me-2"></i>Sign in to Leave a Review
+            </p>
+            <p style="color: #047857; margin-bottom: 0; font-size: 0.9rem;">
+                <a href="{% url 'marketplace:login' %}"
+                    style="color: #047857; font-weight: 600; text-decoration: underline;">Log in</a> or <a
+                    href="{% url 'marketplace:register' %}"
+                    style="color: #047857; font-weight: 600; text-decoration: underline;">create an account</a>
+            </p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

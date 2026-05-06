@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Portfolio{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+        }
+
+        .nav-link.active {
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .resume-link {
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 999px;
+            padding: 0.45rem 0.95rem !important;
+            margin-left: 0.35rem;
+        }
+
+        .resume-link:hover,
+        .resume-link.active {
+            background-color: rgba(255, 255, 255, 0.14);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 40px 0 20px 0;
+            margin-top: 60px;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        .skill-badge {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.9rem;
+        }
+
+        .proficiency-indicator {
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .messages {
+            margin-top: 20px;
+        }
+
+        .site-map-link {
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-copy {
+            white-space: pre-line;
+            line-height: 1.7;
+        }
+
+        .placeholder-note {
+            white-space: pre-line;
+            background-color: #eef5fb;
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 8px;
+            padding: 1rem 1.1rem;
+            color: #345;
+        }
+
+        .project-preview {
+            height: 200px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .project-preview::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at top right, rgba(255, 255, 255, 0.22), transparent 34%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.16));
+            pointer-events: none;
+        }
+
+        .project-preview>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        .project-preview-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .project-preview-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            opacity: 0.88;
+        }
+
+        .project-preview-icon {
+            font-size: 2.4rem;
+            line-height: 1;
+        }
+
+        .project-preview-bottom {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .preview-pill {
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 999px;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.8rem;
+        }
+
+        .preview-chatbot {
+            background: linear-gradient(135deg, #0f766e 0%, #14b8a6 55%, #67e8f9 100%);
+        }
+
+        .preview-langchain {
+            background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 48%, #22c55e 100%);
+        }
+
+        .preview-n8n {
+            background: linear-gradient(135deg, #b91c1c 0%, #ea580c 50%, #f59e0b 100%);
+        }
+
+        .preview-media {
+            background: linear-gradient(135deg, #7c3aed 0%, #ec4899 50%, #f97316 100%);
+        }
+
+        .preview-ml {
+            background: linear-gradient(135deg, #1e293b 0%, #2563eb 50%, #38bdf8 100%);
+        }
+
+        .preview-skillswap {
+            background: linear-gradient(135deg, #166534 0%, #22c55e 50%, #84cc16 100%);
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Portfolio</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                            href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+                            href="{% url 'about' %}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'projects' or request.resolver_match.url_name == 'project-detail' %}active{% endif %}"
+                            href="{% url 'projects' %}">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'skills' %}active{% endif %}"
+                            href="{% url 'skills' %}">Skills</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link resume-link {% if request.resolver_match.url_name == 'resume' %}active{% endif %}"
+                            href="{% url 'resume' %}">Resume</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+                            href="{% url 'contact' %}">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>Portfolio</h5>
+                    <p>A showcase of my projects, skills, and experience.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Site Menu</h5>
+                    <ul class="list-unstyled">
+                        <li><a class="footer-link site-map-link" href="{% url 'home' %}">Home</a></li>
+                        <li><a class="footer-link site-map-link" href="{% url 'about' %}">About</a></li>
+                        <li><a class="footer-link site-map-link" href="{% url 'projects' %}">Projects</a></li>
+                        <li><a class="footer-link site-map-link" href="{% url 'skills' %}">Skills</a></li>
+                        <li><a class="footer-link site-map-link" href="{% url 'resume' %}">Resume</a></li>
+                        <li><a class="footer-link site-map-link" href="{% url 'contact' %}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Project Pages</h5>
+                    <ul class="list-unstyled">
+                        <li><a class="footer-link site-map-link" href="{% url 'projects' %}">All Projects</a></li>
+                        <li><a class="footer-link site-map-link" href="{% url 'projects' %}">Project Detail Pages</a>
+                        </li>
+                        <li><a class="footer-link site-map-link" href="{% url 'resume' %}">Download Resume</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li><a class="footer-link"
+                                href="mailto:Margaret_krieg1@baylor.edu">Margaret_krieg1@baylor.edu</a></li>
+                        <li class="text-white">(832) 728-9763</li>
+                        <li><a class="footer-link" href="https://www.linkedin.com/in/margaretannekrieg"
+                                target="_blank">LinkedIn</a></li>
+                        <li class="text-white">Houston, TX</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p>&copy; 2024 Portfolio. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    {% block extra_js %}{% endblock %}
+
+
+
+</body>
+
+</html>

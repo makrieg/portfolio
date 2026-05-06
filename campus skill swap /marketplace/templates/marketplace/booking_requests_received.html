@@ -1,0 +1,60 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<h2>Booking Requests Received</h2>
+<p>Manage requests for your skills.</p>
+
+{% if requests %}
+<div class="row">
+    {% for request in requests %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">{{ request.skill.title }}</h6>
+                <span class="badge 
+                            {% if request.status == 'pending' %}bg-warning
+                            {% elif request.status == 'accepted' %}bg-success
+                            {% elif request.status == 'declined' %}bg-danger
+                            {% elif request.status == 'completed' %}bg-info
+                            {% else %}bg-secondary{% endif %}">
+                    {{ request.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <p><strong>From:</strong> {{ request.requester.username }}</p>
+                <p><strong>Message:</strong> {{ request.message }}</p>
+                {% if request.preferred_date %}
+                <p><strong>Preferred Date:</strong> {{ request.preferred_date|date:'M d, Y' }}</p>
+                {% endif %}
+                <p><small class="text-muted">Requested on {{ request.created_at|date:'M d, Y' }}</small></p>
+            </div>
+            <div class="card-footer">
+                {% if request.status == 'pending' %}
+                <a href="{% url 'marketplace:booking_request_update_status' request.pk 'accepted' %}"
+                    class="btn btn-success btn-sm">Accept</a>
+                <a href="{% url 'marketplace:booking_request_update_status' request.pk 'declined' %}"
+                    class="btn btn-danger btn-sm">Decline</a>
+                {% elif request.status == 'accepted' %}
+                <a href="{% url 'marketplace:booking_request_update_status' request.pk 'completed' %}"
+                    class="btn btn-info btn-sm">Mark Completed</a>
+                {% endif %}
+                {% if request.status == 'pending' or request.status == 'accepted' %}
+                <a href="{% url 'marketplace:booking_request_update_status' request.pk 'cancelled' %}"
+                    class="btn btn-warning btn-sm">Cancel</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    <h5>No booking requests yet</h5>
+    <p>When students request sessions for your skills, they'll appear here.</p>
+</div>
+{% endif %}
+
+<div class="mt-4">
+    <a href="{% url 'marketplace:dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}

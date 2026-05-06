@@ -1,0 +1,50 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<h2>{{ title }}</h2>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Skill Details</h5>
+            </div>
+            <div class="card-body">
+                <h6>{{ skill.title }}</h6>
+                <p>{{ skill.description }}</p>
+                <p><strong>Category:</strong> {{ skill.category }}</p>
+                <p><strong>Price:</strong> {% if skill.is_free %}Free{% else %}${{ skill.price }}{% endif %}</p>
+                <p><strong>Contact:</strong> {{ skill.contact_preference }}</p>
+                <p><strong>Availability:</strong> {{ skill.availability }}</p>
+            </div>
+        </div>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="card">
+                <div class="card-header">
+                    <h5>Request Details</h5>
+                </div>
+                <div class="card-body">
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success">Send Request</button>
+                    <a href="{% url 'marketplace:skill_detail' skill.pk %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6>How it works:</h6>
+                <ol>
+                    <li>Fill out your request details</li>
+                    <li>The skill provider will review your request</li>
+                    <li>If accepted, you'll be contacted via their preferred method</li>
+                    <li>Complete the session and leave a review!</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

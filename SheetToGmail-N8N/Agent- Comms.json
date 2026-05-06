@@ -1,0 +1,133 @@
+{
+  "name": "Agent- Comms",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent-comms",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3f18e48d-337d-4645-88dd-039f31d179c6",
+      "name": "Webhook",
+      "webhookId": "ed1904f4-bc6f-4c2b-ad32-e5184e90b50f"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=IMPORTANT:\n- Output ONLY valid JSON.\n- Do NOT use markdown.\n- Do NOT use ``` fences.\n- Do NOT add explanations.\n- The entire response must start with { and end with }.\n- Do not use placeholders like [Client Name]. Use the provided values. When formatting the customer's address in the message, if the 'unit' field is empty, blank, or missing, do not mention a unit at all and do not say 'not provided'. Simply write the street address and zip code.\n-Do not include any greetings (like 'Hi there' or 'Dear customer') and do not include any sign-offs. Start directly with the core message.\n-When presenting the scheduling options, you MUST compare the customer's requested availability with the 'proposed_slots'. > * If SOME of the proposed slots match the customer's request but others do not, you must FILTER the list. ONLY output the specific time slots that match what the customer asked for. Completely hide and do not mention any time slots that fall outside their requested availability.\n-If NONE of the proposed slots match the customer's request, say exactly: 'Unfortunately, we do not have availability on your requested days, but here are some alternative time slots we can offer:' and list all proposed slots.\n-If ALL proposed slots match the request, introduce them naturally.\n\n\nWrite a friendly confirmation message for this handyman job. Keep it under 120 words.\nReturn ONLY JSON:\n{ \"message\": \"\" }\n\nJob:\n{{ JSON.stringify($json.body.job) }}\n\nPricing:\n{{ JSON.stringify($json.body.pricing) }}\n\nScheduling:\n{{ JSON.stringify($json.body.scheduling) }}\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8942290e-029a-45c5-9178-657b867e5416",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XogfdEHHtJSVRqEz",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json.content?.parts?.[0]?.text || \"\";\n\n// raw might be a JSON string like: \"{\\\"message\\\":\\\"...\\\"}\"\nlet obj;\n\ntry {\n  // First try: parse as JSON directly\n  obj = JSON.parse(raw);\n} catch (e1) {\n  // If Gemini wrapped it in fences or extra text, clean then parse\n  const cleaned = raw\n    .replace(/```json\\s*/i, \"\")\n    .replace(/```/g, \"\")\n    .trim();\n  try {\n    obj = JSON.parse(cleaned);\n  } catch (e2) {\n    throw new Error(\"Comms output not valid JSON. Raw: \" + raw);\n  }\n}\n\nreturn [{\n  message: obj.message ?? \"\"\n}]; \n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "788c3998-8f53-4e4a-a629-0a24a340fcd6",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        768,
+        0
+      ],
+      "id": "34235a28-87eb-4ff4-9b4f-28f7f274b925",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "cffa9e09-a32b-48fc-955b-deffd960434d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5634405a2be6b2fa485649191ee00ff364f6080e0682ec9f50230f6d110f85ae"
+  },
+  "id": "OaWZzTFUgj1lhl0N",
+  "tags": []
+}

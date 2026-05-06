@@ -1,0 +1,11 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<h2>Delete Skill</h2>
+<p>Are you sure you want to delete "{{ skill.title }}"?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, delete</button>
+    <a href="{% url 'marketplace:dashboard' %}" class="btn btn-secondary">No, go back</a>
+</form>
+{% endblock %}

@@ -1,0 +1,501 @@
+{
+  "name": "Agent- Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "sendTo": "={{ $('Google Sheets Trigger1').first().json[\"Your email address\"] }}",
+        "subject": "Your Handyman Service Estimate & Scheduling Options",
+        "message": "=<p>Hi {{ $('Google Sheets Trigger1').first().json[\"Your Full Name \"].split(' ')[0] }},</p>\n\n<p>{{ $json.comms.message.replace(/\\n/g, '<br>') }}</p>\n\n<p>Best regards,<br>\n<strong>The Handyman Operations Team</strong></p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2704,
+        -320
+      ],
+      "id": "299fd374-488b-4b69-ad0a-727ca8a31334",
+      "name": "Send a message",
+      "webhookId": "47b1bed9-e01c-450c-8a28-0e840bf62935",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "K2xrT8fJe5qYC5NA",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7fd07d9c-0984-4801-a821-9ca8ca8ffa6a",
+              "name": "=job",
+              "value": "={{ $json }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1328,
+        -320
+      ],
+      "id": "24e5362b-5bc7-4961-9b43-9f876467f8ff",
+      "name": "Store Job1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c62df7fe-7600-455a-aae8-35acd75bdfed",
+              "name": "pricing",
+              "value": "={{ $json }}",
+              "type": "object"
+            },
+            {
+              "id": "b1dd0366-38cb-4f03-8b40-d30781786be5",
+              "name": "job",
+              "value": "={{ $node[\"Store Job1\"].json.job }}",
+              "type": "object"
+            },
+            {
+              "id": "58a323fc-8640-4c57-8049-60641c2af145",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1696,
+        -320
+      ],
+      "id": "55e2cd10-cfea-44d4-96db-15e603693cf4",
+      "name": "Store Pricing1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://makrieg.app.n8n.cloud/webhook/agent-intake",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1168,
+        -320
+      ],
+      "id": "476de930-faf9-4367-b21b-51649879765b",
+      "name": "Call Intake1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dd9dbbea-6797-4c6a-b8af-4e2472987cb5",
+              "name": "scheduling",
+              "value": "={{$json}}",
+              "type": "object"
+            },
+            {
+              "id": "052a4b0e-17d3-41c0-963a-ec0469aab19a",
+              "name": "job",
+              "value": "={{ $node[\"Store Job1\"].json.job }}",
+              "type": "object"
+            },
+            {
+              "id": "67b584f8-1980-4bdd-bf40-de23601d16bf",
+              "name": "pricing",
+              "value": "={{ $node[\"Store Pricing1\"].json.pricing }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2112,
+        -320
+      ],
+      "id": "9d4642c2-cace-4cf2-a74d-d60c62348ce7",
+      "name": "Store Scheduling1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "145e88b6-90bd-424c-a6b9-1bbb959e018c",
+              "name": "comms",
+              "value": "={{ $json }}",
+              "type": "object"
+            },
+            {
+              "id": "478c5527-7f2c-4db7-b6aa-e7320432fd12",
+              "name": "pricing",
+              "value": "={{ $node[\"Store Pricing1\"].json.pricing }}",
+              "type": "object"
+            },
+            {
+              "id": "a6093e19-f876-40dd-b22d-ef9c7ac922d5",
+              "name": "job",
+              "value": "={{ $node[\"Store Job1\"].json.job }}",
+              "type": "object"
+            },
+            {
+              "id": "3ff0d12e-7fca-44f0-a458-f31b83219d70",
+              "name": "full_name",
+              "value": "={{ $node[\"Google Sheets Trigger1\"].json[\"Full Name\"] }}",
+              "type": "object"
+            },
+            {
+              "id": "4bb8d5d5-81a3-470a-a36a-8f85f0287efc",
+              "name": "email",
+              "value": "={{ $node[\"Google Sheets Trigger1\"].json[\"Email Address\"] }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2528,
+        -320
+      ],
+      "id": "e0571aaa-b527-4b33-aa92-4c50060f9138",
+      "name": "Store Comms1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://makrieg.app.n8n.cloud/webhook/agent-pricing",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "service",
+              "value": "={{ $json.job.service }}"
+            },
+            {
+              "name": "zip",
+              "value": "={{ $json.job.zip }}"
+            },
+            {
+              "name": "urgency",
+              "value": "={{ $json.job.urgency }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1488,
+        -320
+      ],
+      "id": "a35cbcbc-715d-454c-96e5-8645bc2be732",
+      "name": "Call Pricing Agent1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://makrieg.app.n8n.cloud/webhook/agent-scheduling",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "preferred_days",
+              "value": "={{$json.job.preferred_days}} "
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1904,
+        -320
+      ],
+      "id": "442f7f55-12de-4694-ae97-e102d934d4cf",
+      "name": "Call Scheduling Agent1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://makrieg.app.n8n.cloud/webhook/agent-comms",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2320,
+        -320
+      ],
+      "id": "6ac7fc19-68b8-4a78-8c31-033955ba3d8a",
+      "name": "Call Comms Agent1"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1cjkLjaKQovtSKfkmqpJ9mdvBqDk02upx2AtJhjkfxw0",
+          "mode": "list",
+          "cachedResultName": "Handyman Service Request ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cjkLjaKQovtSKfkmqpJ9mdvBqDk02upx2AtJhjkfxw0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1741966541,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1cjkLjaKQovtSKfkmqpJ9mdvBqDk02upx2AtJhjkfxw0/edit#gid=1741966541"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        784,
+        -320
+      ],
+      "id": "03eec475-d83a-475b-9424-08e5d2f12395",
+      "name": "Google Sheets Trigger1",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "5iev77r9xVzYyOMQ",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "76d0bcc2-80e7-4797-94a6-29b8029c5642",
+              "name": "message",
+              "value": "=Customer Name: {{ $json[\"Your Full Name \"] }}\nEmail: {{ $json[\"Your email address\"] }}\nAddress: {{ $json[\"Service address\"] }}\nService Request: {{ $json[\"Please describe your service need including available dates and times\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        -320
+      ],
+      "id": "234f6ec5-0613-476f-bd2d-27951b80f503",
+      "name": "Build Intake Message1"
+    }
+  ],
+  "pinData": {
+    "Google Sheets Trigger1": [
+      {
+        "json": {
+          "Timestamp": "3/3/2026 14:32:02",
+          "Your Full Name ": "Sarah Kim",
+          "Your email address": "makrieg4208@gmail.com",
+          "Service address": "245 Oak Drive 76710",
+          "Please describe your service need including available dates and times": "My garbage disposal stopped working and is making a loud noise. I’m available Friday morning or Monday afternoon."
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Store Job1": {
+      "main": [
+        [
+          {
+            "node": "Call Pricing Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Pricing1": {
+      "main": [
+        [
+          {
+            "node": "Call Scheduling Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Intake1": {
+      "main": [
+        [
+          {
+            "node": "Store Job1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Scheduling1": {
+      "main": [
+        [
+          {
+            "node": "Call Comms Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Comms1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Pricing Agent1": {
+      "main": [
+        [
+          {
+            "node": "Store Pricing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Scheduling Agent1": {
+      "main": [
+        [
+          {
+            "node": "Store Scheduling1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Comms Agent1": {
+      "main": [
+        [
+          {
+            "node": "Store Comms1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Build Intake Message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Intake Message1": {
+      "main": [
+        [
+          {
+            "node": "Call Intake1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "05c25892-7c1e-4958-b32c-35fd429ea7a5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5634405a2be6b2fa485649191ee00ff364f6080e0682ec9f50230f6d110f85ae"
+  },
+  "id": "a09F0eS3Pwc0ROts",
+  "tags": []
+}

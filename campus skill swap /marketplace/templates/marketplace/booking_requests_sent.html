@@ -1,0 +1,64 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<h2>My Booking Requests</h2>
+<p>Track the requests you've sent for skill sessions.</p>
+
+{% if requests %}
+<div class="row">
+    {% for request in requests %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">{{ request.skill.title }}</h6>
+                <span class="badge 
+                            {% if request.status == 'pending' %}bg-warning
+                            {% elif request.status == 'accepted' %}bg-success
+                            {% elif request.status == 'declined' %}bg-danger
+                            {% elif request.status == 'completed' %}bg-info
+                            {% else %}bg-secondary{% endif %}">
+                    {{ request.get_status_display }}
+                </span>
+            </div>
+            <div class="card-body">
+                <p><strong>Skill Owner:</strong> {{ request.skill.owner.username }}</p>
+                <p><strong>Your Message:</strong> {{ request.message }}</p>
+                {% if request.preferred_date %}
+                <p><strong>Preferred Date:</strong> {{ request.preferred_date|date:'M d, Y' }}</p>
+                {% endif %}
+                <p><small class="text-muted">Sent on {{ request.created_at|date:'M d, Y' }}</small></p>
+
+                {% if request.status == 'accepted' %}
+                <div class="alert alert-success mt-2">
+                    <strong>Accepted!</strong> Contact {{ request.skill.owner.username }} via {{ request.skill.contact_preference|lower }}.
+                </div>
+                {% elif request.status == 'declined' %}
+                <div class="alert alert-warning mt-2">
+                    <strong>Declined</strong> - The skill provider was unable to accommodate this request.
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'marketplace:skill_detail' request.skill.pk %}" class="btn btn-primary btn-sm">View
+                    Skill</a>
+                {% if request.status == 'pending' or request.status == 'accepted' %}
+                <a href="{% url 'marketplace:booking_request_update_status' request.pk 'cancelled' %}"
+                    class="btn btn-warning btn-sm">Cancel Request</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    <h5>No booking requests sent</h5>
+    <p>You haven't requested any skill sessions yet. Browse skills and send requests to get started!</p>
+    <a href="{% url 'marketplace:home' %}" class="btn btn-primary">Browse Skills</a>
+</div>
+{% endif %}
+
+<div class="mt-4">
+    <a href="{% url 'marketplace:dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}

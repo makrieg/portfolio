@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Resume - Portfolio{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <h1>My Resume</h1>
+                <p class="lead mb-0">Preview my resume online or download a PDF copy.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'resume-download' %}" class="btn btn-light btn-lg">Download PDF</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">Resume Options</h2>
+                    <p class="text-muted">
+                        You can view the resume directly in the browser or download it to save and share.
+                    </p>
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'resume-download' %}" class="btn btn-primary">Download Resume</a>
+                        <a href="{% static 'resume.pdf' %}" class="btn btn-outline-primary" target="_blank">Open Fullscreen</a>
+                        <a href="{% url 'contact' %}" class="btn btn-outline-secondary">Contact Me</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body p-3 p-md-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h4 mb-0">Resume Preview</h2>
+                        <small class="text-muted">PDF preview</small>
+                    </div>
+                    <div class="resume-frame-wrap">
+                        <iframe
+                            src="{% static 'resume.pdf' %}"
+                            title="Resume PDF Preview"
+                            class="resume-frame">
+                        </iframe>
+                    </div>
+                    <p class="text-muted small mt-3 mb-0">
+                        If the preview does not load in your browser, use the download button above.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .resume-frame-wrap {
+        overflow: hidden;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        background-color: #ffffff;
+    }
+
+    .resume-frame {
+        width: 100%;
+        min-height: 900px;
+        border: 0;
+        background-color: #ffffff;
+    }
+
+    @media (max-width: 991px) {
+        .resume-frame {
+            min-height: 700px;
+        }
+    }
+</style>
+{% endblock %}
